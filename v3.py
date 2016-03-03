@@ -324,7 +324,7 @@ class Herbivore(Animal):
     def decider(self,ecosysH,ecosysC):
         self.eNourriture -= 1
         self.eEau-=1
-        dHC=100000000000000000000
+        dHC=2*(2*map.limitex)^2
         #On regarde à quelle distance sont les carnivores
         if len(ecosysC)>0:#si il y'a au moins un carnivore, l'herbivore peut prendre la fuite            
             xC=ecosysC[0].x
