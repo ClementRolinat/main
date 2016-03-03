@@ -2,6 +2,28 @@ from random import randint
 import time
 from math import *
 
+def potentiel(x,y,vitesse,ecosysteme):
+    xp=x
+    yp=y
+    score=0
+    for i in range(-vitesse,vitesse+1):
+        for j in range (-vitesse,vitesse+1):
+            coord=(x+i,y+j)
+            s=0
+            for an in ecosysteme:
+                d=sqrt((an.x-coord[0])**2+(an.y-coord[1])**2)
+                if d<2:
+                    if d!=0:
+                        s+=-1/d # fait baisser le score si le point testé est trop près d'autres animaux
+                else:
+                    s+=1/d # augmente le score sinon
+            if s>score:
+                score=s
+                xp=coord[0]
+                yp=coord[1]
+    return xp,yp
+
+
 def signnourriture(x,y,d): #Fonction pour se rapprocher de la nourriture
     if x>map.limiteDN:
         if y>map.limiteHN:
@@ -324,7 +346,7 @@ class Herbivore(Animal):
     def decider(self,ecosysH,ecosysC):
         self.eNourriture -= 1
         self.eEau-=1
-        dHC=100000000000000000000
+        dHC=2*(2*map.limitex)^2
         #On regarde à quelle distance sont les carnivores
         if len(ecosysC)>0:#si il y'a au moins un carnivore, l'herbivore peut prendre la fuite            
             xC=ecosysC[0].x
@@ -355,18 +377,20 @@ class Herbivore(Animal):
                         self.xp = self.x + signnourriture(self.x,self.y,self.vitesse//2)[0]
                         self.yp = self.y + signnourriture(self.x,self.y,self.vitesse//2)[1]
             if len(ecosysH)>1 and not self.afaim() and not self.asoif(): # si il a ni faim ni soif, il cherche à se rapprocher des autres herbivore
-                if coordTroupeau(ecosysH)[0]>self.x:
-                    self.xp = self.x + self.vitesse//2
-                elif coordTroupeau(ecosysH)[0]<self.x:
-                    self.xp = self.x - self.vitesse//2
-                else:
-                    self.xp = self.x
-                if coordTroupeau(ecosysH)[1]>self.y:
-                    self.yp = self.y + self.vitesse//2
-                elif coordTroupeau(ecosysH)[1]<self.y:
-                    self.yp = self.y - self.vitesse//2
-                else:
-                    self.yp = self.y
+                self.xp,self.yp = potentiel(self.x,self.y,self.vitesse//2,ecosysH)
+
+                # if coordTroupeau(ecosysH)[0]>self.x:
+                #     self.xp = self.x + self.vitesse//2
+                # elif coordTroupeau(ecosysH)[0]<self.x:
+                #     self.xp = self.x - self.vitesse//2
+                # else:
+                #     self.xp = self.x
+                # if coordTroupeau(ecosysH)[1]>self.y:
+                #     self.yp = self.y + self.vitesse//2
+                # elif coordTroupeau(ecosysH)[1]<self.y:
+                #     self.yp = self.y - self.vitesse//2
+                # else:
+                #     self.yp = self.y
             if len(ecosysH)==1 and not self.afaim() and not self.asoif():
                 self.xp = self.x + randint(-self.vitesse//2, self.vitesse//2)
                 self.yp = self.y + randint(-self.vitesse//2, self.vitesse//2)
@@ -489,12 +513,12 @@ class Ecosysteme(list): #Affiche la carte, l'eau, la nourriture et les annimaux
 
 if __name__ == "__main__":
 
-    map=Terrain(20,15,(0,0),3,(12,12),2)
+    map=Terrain(30,20,(0,0),6,(0,0),12)
     ecosysH = []
     ecosysC = []
-    nbH = 30
-    nbC=2
-    nbtour = 30
+    nbH = 4
+    nbC=0
+    nbtour = 40
     ecosys=Ecosysteme(nbH,nbC)
 
    
